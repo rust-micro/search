@@ -1,10 +1,23 @@
 <script setup>
 import Caniusers from "@/components/Caniusers.vue";
+
+const websites = {
+  "docs.rs": "https://docs.rs/releases/search?query=%s",
+  "rustdoc": "https://doc.rust-lang.org/std/?search=%s",
+  "crates.io": "https://crates.io/search?q=%s",
+  "rust by example": "https://doc.rust-lang.org/rust-by-example/?search=%s",
+  "roogle": "https://roogle.hkmatsumoto.com/search?query=%s&scope=set%3Alibstd",
+  "error_codes": "https://doc.rust-lang.org/error_codes/%s.html",
+  "clippy lints": "https://rust-lang.github.io/rust-clippy/master/#%s",
+  "rustdoc (nightly)": "https://doc.rust-lang.org/nightly/reference/?search=%s",
+  "rust version": "https://github.com/rust-lang/rust/blob/master/RELEASES.md?version=%s"
+}
+
 </script>
 
 <template>
   <h3>How it works:</h3>
-  Type your search term in the search bar and<br />
+  Type your search term in the search bar and<br/>
   click on the link for the site you want to use.
   <br/>
   <br/>
@@ -27,19 +40,20 @@ import Caniusers from "@/components/Caniusers.vue";
 export default {
   data() {
     return {
-      search_input: "",
-      websites: {
-        "docs.rs": "https://docs.rs/releases/search?query=%s",
-        "rustdoc": "https://doc.rust-lang.org/std/?search=%s",
-        "crates.io": "https://crates.io/search?q=%s",
-        "rust by example": "https://doc.rust-lang.org/rust-by-example/?search=%s",
-        "roogle": "https://roogle.hkmatsumoto.com/search?query=%s&scope=set%3Alibstd",
-        "error_codes": "https://doc.rust-lang.org/error_codes/%s.html",
-        "clippy lints": "https://rust-lang.github.io/rust-clippy/master/#%s",
-        "rustdoc (nightly)": "https://doc.rust-lang.org/nightly/reference/?search=%s",
-        "rust version": "https://github.com/rust-lang/rust/blob/master/RELEASES.md?version=%s"
-
-      }
+      search_input: ""
+    }
+  },
+  watch: {
+    search_input: function (newVal, oldVal) {
+      const params = new URLSearchParams(window.location.search);
+      params.set("q", newVal);
+      window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+    }
+  },
+  mounted() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("q")) {
+      this.search_input = params.get("q");
     }
   },
   name: "SearchBar"
