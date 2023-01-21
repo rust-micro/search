@@ -3,8 +3,12 @@ import Caniusers from "@/components/Caniusers.vue";
 </script>
 
 <template>
-  <input type="text" placeholder="Search" v-model="search_input"/>
-  <button type="submit">Submit</button>
+  <h3>How it works:</h3>
+  Type your search term in the search bar and<br />
+  click on the link for the site you want to use.
+  <br/>
+  <br/>
+  <input type="text" placeholder="Search" v-model="search_input" style="width:100%"/>
 
   <br/>
   <ul>
@@ -15,8 +19,8 @@ import Caniusers from "@/components/Caniusers.vue";
       <a href="https://caniuse.rs">canisuse.rs</a>
     </li>
   </ul>
-  <br />
-  <Caniusers :search_input="search_input" />
+  <br/>
+  <Caniusers :search_input="search_input"/>
 </template>
 
 <script>
