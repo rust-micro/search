@@ -17,7 +17,7 @@
         ({{ name }})
       </td>
       <td>
-        <a href="">
+        <a :href="parseUrl(link[1])">
           {{ link[0] }}
         </a>
       </td>
