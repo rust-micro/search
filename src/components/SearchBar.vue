@@ -3,6 +3,9 @@
   Type your search term in the search bar and<br />
   click on the link for the site you want to use.
   <br />
+  The single character displays the shortcut<br />
+  key you can use to open the link.
+  <br />
   <br />
   <input @focus="disableHotkeys" @blur="enableHotkeys" ref="search" type="text" placeholder="Search"
     v-model="search_input" style="width:100%" />
