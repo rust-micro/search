@@ -1,47 +1,46 @@
-<script setup>
-import Caniusers from "@/components/Caniusers.vue";
-
-const websites = {
-  "docs.rs": "https://docs.rs/releases/search?query=%s",
-  "rustdoc": "https://doc.rust-lang.org/std/?search=%s",
-  "crates.io": "https://crates.io/search?q=%s",
-  "rust by example": "https://doc.rust-lang.org/rust-by-example/?search=%s",
-  "roogle": "https://roogle.hkmatsumoto.com/search?query=%s&scope=set%3Alibstd",
-  "error_codes": "https://doc.rust-lang.org/error_codes/%s.html",
-  "clippy lints": "https://rust-lang.github.io/rust-clippy/master/#%s",
-  "rustdoc (nightly)": "https://doc.rust-lang.org/nightly/reference/?search=%s",
-  "rust version": "https://github.com/rust-lang/rust/blob/master/RELEASES.md?version=%s"
-}
-
-</script>
-
 <template>
   <h3>How it works:</h3>
-  Type your search term in the search bar and<br/>
+  Type your search term in the search bar and<br />
   click on the link for the site you want to use.
-  <br/>
-  <br/>
-  <input type="text" placeholder="Search" v-model="search_input" style="width:100%"/>
+  <br />
+  <br />
+  <input @focus="disableHotkeys" @blur="enableHotkeys" ref="search" type="text" placeholder="Search"
+    v-model="search_input" style="width:100%" />
 
-  <br/>
+  <br />
   <ul>
     <li v-for="(link, name) in websites">
-      <a :href="link.replace('%s', encodeURIComponent(search_input))" target="_blank">{{ name }}</a>
-    </li>
-    <li>
-      <a href="https://caniuse.rs">canisuse.rs</a>
+      <a :href="parseUrl(link[1])" target="_blank"><span style="width: 100px;" width="100px">({{ name }})</span> {{
+        link[0] }}</a>
     </li>
   </ul>
-  <br/>
-  <Caniusers :search_input="search_input"/>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      search_input: ""
+      search_input: "",
+      hotkeys_enabled: true,
+      websites: {
+        "d": ["docs.rs", "https://docs.rs/releases/search?query=%s"],
+        "r": ["rustdoc", "https://doc.rust-lang.org/std/?search=%s"],
+        "c": ["crates.io", "https://crates.io/search?q=%s"],
+        "e": ["rust by example", "https://doc.rust-lang.org/rust-by-example/?search=%s"],
+        "o": ["roogle", "https://roogle.hkmatsumoto.com/search?query=%s&scope=set%3Alibstd"],
+        "c": ["error_codes", "https://doc.rust-lang.org/error_codes/%s.html"],
+        "l": ["clippy lints", "https://rust-lang.github.io/rust-clippy/master/#%s"],
+        "n": ["rustdoc (nightly)", "https://doc.rust-lang.org/nightly/reference/?search=%s"],
+        "v": ["rust version", "https://github.com/rust-lang/rust/blob/master/RELEASES.md?version=%s"],
+        "u": ["can I use?", "https://caniuse.rs/#q=%s"]
+      }
     }
+  },
+  created() {
+    window.addEventListener("keydown", this.keydown)
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keydown)
   },
   watch: {
     search_input: function (newVal, oldVal) {
@@ -51,15 +50,37 @@ export default {
     }
   },
   mounted() {
+    this.$refs.search.focus();
+
     const params = new URLSearchParams(window.location.search);
     if (params.has("q")) {
       this.search_input = params.get("q");
+    }
+  },
+  methods: {
+    keydown(event) {
+      if (this.hotkeys_enabled && event.key in this.websites) {
+        console.log(event.key)
+        let found = this.websites[event.key];
+        console.log(found);
+        if (found !== undefined) {
+          let url = this.parseUrl(found[1]);
+          window.open(url, "_blank");
+        }
+      }
+    },
+    enableHotkeys() {
+      this.hotkeys_enabled = true;
+    },
+    disableHotkeys() {
+      this.hotkeys_enabled = false;
+    },
+    parseUrl(link) {
+      return link.replace('%s', encodeURIComponent(this.search_input));
     }
   },
   name: "SearchBar"
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
