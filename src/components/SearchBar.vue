@@ -8,12 +8,18 @@
     v-model="search_input" style="width:100%" />
 
   <br />
-  <ul>
-    <li v-for="(link, name) in websites">
-      <a :href="parseUrl(link[1])" target="_blank"><span style="width: 100px;" width="100px">({{ name }})</span> {{
-        link[0] }}</a>
-    </li>
-  </ul>
+  <table>
+    <tr v-for="(link, name) in websites">
+      <td style="display: list-item; margin-left: 1em;">
+        ({{ name }})
+      </td>
+      <td>
+        <a href="">
+          {{ link[0] }}
+        </a>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script>
@@ -58,14 +64,21 @@ export default {
     }
   },
   methods: {
+    open(link) {
+      window.open(link, "_blank");
+    },
     keydown(event) {
-      if (this.hotkeys_enabled && event.key in this.websites) {
-        console.log(event.key)
-        let found = this.websites[event.key];
-        console.log(found);
-        if (found !== undefined) {
-          let url = this.parseUrl(found[1]);
-          window.open(url, "_blank");
+      if (this.hotkeys_enabled) {
+        if (event.key in this.websites) {
+          let found = this.websites[event.key];
+          if (found !== undefined) {
+            let url = this.parseUrl(found[1]);
+            this.open(url);
+          }
+        } else if (event.key === "s") {
+          let temp = this.search_input;
+          this.$refs.search.focus();
+          this.search_input = temp;
         }
       }
     },
